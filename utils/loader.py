@@ -3,7 +3,6 @@ import numpy as np
 from tsl.ops.similarities import top_k
 import datetime
 
-ROOT_DIR = "/data1/home/leyan/code/project"
 
 def get_dataloader(args, X, mask_X, Ex, Mask, TimeFirst=True):
 
@@ -34,12 +33,12 @@ def get_dataloader(args, X, mask_X, Ex, Mask, TimeFirst=True):
     return train_dataset, val_dataset, test_dataset
 
 
-def get_dataset(dataset_name: str, threshold: float, knn: int):
+def get_dataset(data_dir: str, dataset_name: str, threshold: float, knn: int):
 
     if dataset_name == 'pvus':
         
-        data = np.load(f"{ROOT_DIR}/data/pvus/pvus.npy")
-        distance = np.load(f"{ROOT_DIR}/data/pvus/distance.npy")
+        data = np.load(f"{data_dir}/pvus/pvus.npy")
+        distance = np.load(f"{data_dir}/pvus/distance.npy")
 
         data = data.astype('float32')
         distance = -distance.astype('float32')
@@ -66,8 +65,8 @@ def get_dataset(dataset_name: str, threshold: float, knn: int):
 
     elif dataset_name == 'cer':
 
-        data = np.load(f"{ROOT_DIR}/data/cer/cer.npy")
-        distance = np.load(f"{ROOT_DIR}/data/cer/distance.npy")
+        data = np.load(f"{data_dir}/cer/cer.npy")
+        distance = np.load(f"{data_dir}/cer/distance.npy")
 
         drop_len = (31+30+31+30+31+17) * 48
         agg_data = data[:, drop_len:].astype('float32')
@@ -78,7 +77,6 @@ def get_dataset(dataset_name: str, threshold: float, knn: int):
 
         # k adjacent nodes
         top_k_adj = top_k(distance, knn, include_self=True)
-        # similarity = 0.8
         top_k_adj[top_k_adj.T!=0] = 1
         distance[top_k_adj==0] = 0
 
